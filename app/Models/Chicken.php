@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Chicken extends Model
 {
-    use HasFactory;
+    protected $fillable = ['kode_kandang', 'jenis_ayam', 'jumlah_ekor', 'tanggal_masuk'];
 }
