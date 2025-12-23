@@ -1,37 +1,43 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ChickenController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ShopController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Route Dashboard (Setelah Login)
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Semua Route yang butuh Login ditaruh di sini
 Route::middleware('auth')->group(function () {
+    
+    // Profile (Bawaan Breeze)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-// Grouping agar hanya Admin yang bisa akses
-Route::middleware(['auth', 'verified'])->group(function () {
+
+    // Modul 1: Manajemen Ayam
     Route::resource('chickens', ChickenController::class);
+
+    // Modul 2: Manajemen Produk
+    Route::resource('products', ProductController::class);
+
+    // Modul 3: Manajemen Pesanan
+    Route::get('/admin/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/admin/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.update');
 });
-Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 
 require __DIR__.'/auth.php';
